@@ -25,6 +25,7 @@ class WeatherService {
     parameters.add("oauth_signature_method=HMAC-SHA1");
     parameters.add("oauth_timestamp=" + timestamp.toString());
     parameters.add("oauth_version=1.0");
+    parameters.add("realm=yahooapis.com");
     // Make sure value is encoded
     parameters.add("location=" + Uri.encodeComponent("sunnyvale,ca"));
     parameters.add("format=json");
@@ -49,6 +50,7 @@ class WeatherService {
 
 
     String authorizationLine = "OAuth " +
+            "realm=\"yahooapis.com\"" +
             "oauth_consumer_key=\"" + consumerKey + "\", " +
             "oauth_nonce=\"" + oauthNonce + "\", " +
             "oauth_timestamp=\"" + timestamp.toString() + "\", " +
@@ -56,7 +58,7 @@ class WeatherService {
             "oauth_signature=\"" + signature + "\", " +
             "oauth_version=\"1.0\"";
 
-    Map<String, String> header = new HashMap<String, String>();
+    Map<String, String> header = new HashMap();
     header["X-Yahoo-App-Id"] = appId;
     header["Content-Type"] = "application/json";
     header["Authorization"] = authorizationLine;
