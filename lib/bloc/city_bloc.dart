@@ -23,7 +23,7 @@ class CityBloc extends Bloc {
   void _searchCity(String keyWord) async {
     final data = await service.searchCity(keyWord);
     _cities.sink.add(data);
-    weatherService.fetchWeaher(1252376);
+    final res = await weatherService.fetchWeather(1252376);
   }
 
   void setKeyWord(String keyWord) {

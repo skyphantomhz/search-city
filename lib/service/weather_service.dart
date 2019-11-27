@@ -3,9 +3,11 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
+import 'package:search_city/model/weather/weather.dart';
 
 class WeatherService {
   final client = GetIt.I<http.Client>();
+  final _decoder = GetIt.I<JsonDecoder>();
 
   final String appId = "iOMlMm4s";
   final String consumerKey =
@@ -14,7 +16,7 @@ class WeatherService {
   final String signature = "oD%2Fv1S%2F1XicbZb%2FqkZcLUY3ec3Q%3D";
   final String baseUrl = "https://weather-ydn-yql.media.yahoo.com/forecastrss";
 
-  void fetchWeaher(int woeid) async {
+  Future<Weather> fetchWeather(int woeid) async {
     int timestamp = DateTime.now().millisecondsSinceEpoch ~/ 1000;
     List<String> parameters = new List<String>();
     final oauthNonce = "anc";
@@ -67,6 +69,11 @@ class WeatherService {
 
     final query = "?woeid=$woeid&format=json";
     final response = await client.get(baseUrl + query, headers: header);
-    print(response.body);
+    if (response.statusCode == 200) {
+      var json = _decoder.convert(response.body);
+      return new Weather.fromJson(json);
+    } else {
+      throw Exception("Failed to load route");
+    }
   }
 }
