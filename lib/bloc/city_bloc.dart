@@ -4,9 +4,11 @@ import 'package:rxdart/rxdart.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:search_city/model/city.dart';
 import 'package:search_city/service/city_service.dart';
+import 'package:search_city/service/weather_service.dart';
 
 class CityBloc extends Bloc {
   final service = GetIt.I<CityService>();
+  final weatherService = GetIt.I<WeatherService>();
 
   PublishSubject<String> _keyWord = PublishSubject<String>();
   PublishSubject<List<City>> _cities = PublishSubject<List<City>>();
@@ -21,6 +23,7 @@ class CityBloc extends Bloc {
   void _searchCity(String keyWord) async {
     final data = await service.searchCity(keyWord);
     _cities.sink.add(data);
+    weatherService.demo();
   }
 
   void setKeyWord(String keyWord) {
