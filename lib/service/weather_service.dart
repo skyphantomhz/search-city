@@ -14,10 +14,8 @@ class WeatherService {
   final String signature = "oD%2Fv1S%2F1XicbZb%2FqkZcLUY3ec3Q%3D";
   final String baseUrl = "https://weather-ydn-yql.media.yahoo.com/forecastrss";
 
-
-  void demo() async {
-    // int timestamp = DateTime.now().millisecondsSinceEpoch/1000;
-    int timestamp = 1574846502;
+  void fetchWeaher(int woeid) async {
+    int timestamp = DateTime.now().millisecondsSinceEpoch ~/ 1000;
     List<String> parameters = new List<String>();
     final oauthNonce = "anc";
     parameters.add("oauth_consumer_key=" + consumerKey);
@@ -25,9 +23,8 @@ class WeatherService {
     parameters.add("oauth_signature_method=HMAC-SHA1");
     parameters.add("oauth_timestamp=" + timestamp.toString());
     parameters.add("oauth_version=1.0");
-    parameters.add("realm=yahooapis.com");
     // Make sure value is encoded
-    parameters.add("location=" + Uri.encodeComponent("sunnyvale,ca"));
+    parameters.add("woeid=" + woeid.toString());
     parameters.add("format=json");
     parameters.sort();
 
@@ -41,28 +38,34 @@ class WeatherService {
         "&" +
         Uri.encodeComponent(parametersList.toString());
 
-    var key = utf8.encode('$consumerKey&');
+    var key = utf8.encode('$consumerSecret&');
     var bytes = utf8.encode(signatureString);
-
-    var hmacSha1 = new Hmac(sha1, key); // HMAC-SHA1
+    var hmacSha1 = new Hmac(sha1, key);
     var digest = hmacSha1.convert(bytes);
     final signature = base64Encode(digest.bytes);
 
-
     String authorizationLine = "OAuth " +
-            "realm=\"yahooapis.com\"" +
-            "oauth_consumer_key=\"" + consumerKey + "\", " +
-            "oauth_nonce=\"" + oauthNonce + "\", " +
-            "oauth_timestamp=\"" + timestamp.toString() + "\", " +
-            "oauth_signature_method=\"HMAC-SHA1\", " +
-            "oauth_signature=\"" + signature + "\", " +
-            "oauth_version=\"1.0\"";
+        "oauth_consumer_key=\"" +
+        consumerKey +
+        "\", " +
+        "oauth_nonce=\"" +
+        oauthNonce +
+        "\", " +
+        "oauth_timestamp=\"" +
+        timestamp.toString() +
+        "\", " +
+        "oauth_signature_method=\"HMAC-SHA1\", " +
+        "oauth_signature=\"" +
+        signature +
+        "\", " +
+        "oauth_version=\"1.0\"";
 
     Map<String, String> header = new HashMap();
     header["X-Yahoo-App-Id"] = appId;
     header["Content-Type"] = "application/json";
     header["Authorization"] = authorizationLine;
-    final query = "?location="+Uri.encodeComponent("sunnyvale,ca")+"&format=json";
+
+    final query = "?woeid=$woeid&format=json";
     final response = await client.get(baseUrl + query, headers: header);
     print(response.body);
   }
