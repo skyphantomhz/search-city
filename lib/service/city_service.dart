@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:search_city/model/base_response.dart';
 import 'package:search_city/model/city.dart';
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
