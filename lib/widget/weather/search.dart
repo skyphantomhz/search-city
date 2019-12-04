@@ -14,11 +14,13 @@ class _SearchCityState extends State<SearchCity> {
   final inputController = TextEditingController();
   CityBloc bloc;
   WeatherBloc weatherBloc;
+  CityBloc cityBloc;
 
   @override
   Widget build(BuildContext context) {
     bloc = BlocProvider.of<CityBloc>(context);
     weatherBloc = BlocProvider.of<WeatherBloc>(context);
+    cityBloc = BlocProvider.of<CityBloc>(context);
     bloc.addListener();
     return Column(
       children: <Widget>[
@@ -55,6 +57,7 @@ class _SearchCityState extends State<SearchCity> {
                     return InkWell(
                       onTap: () {
                         weatherBloc.fetchWeather(item.woeid);
+                        cityBloc.onCityClick(item);
                       },
                       child: Column(
                         children: <Widget>[

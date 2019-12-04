@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:search_city/bloc/weather_bloc.dart';
+import 'package:search_city/model/weather/weather.dart' as WeatherModel;
 import 'package:search_city/model/weather/location.dart';
 import 'package:search_city/widget/weather/search.dart';
 
@@ -28,10 +29,10 @@ class _WeatherState extends State<Weather> {
             child: Container(
               child: Column(
                 children: <Widget>[
-                  StreamBuilder<Location>(
-                      stream: weatherBloc.location,
+                  StreamBuilder<WeatherModel.Weather>(
+                      stream: weatherBloc.weather,
                       builder: (context, snapshot) {
-                        final name = snapshot?.data?.city ?? "N/A";
+                        final name = snapshot?.data?.location?.city ?? "N/A";
                         return Text(name);
                       }),
                   StreamBuilder<Location>(

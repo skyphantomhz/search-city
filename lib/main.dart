@@ -7,8 +7,11 @@ import 'package:search_city/bloc/weather_bloc.dart';
 import 'package:search_city/util/locator.dart';
 import 'package:search_city/widget/home.dart';
 
+import 'data/local_datasource.dart';
+
 void main() {
   setupLocator();
+  LocalDataSource.connect();
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
   runApp(

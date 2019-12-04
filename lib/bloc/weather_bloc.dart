@@ -9,6 +9,7 @@ class WeatherBloc extends BaseBloc {
   final weatherService = GetIt.I<WeatherService>();
 
   PublishSubject<Weather> _weather = PublishSubject<Weather>();
+  Observable<Weather> get weather => _weather.stream;
   Observable<Location> location;
   Observable<int> temperature;
 
