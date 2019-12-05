@@ -1,54 +1,62 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:search_city/bloc/city_bloc.dart';
 import 'package:search_city/bloc/weather_bloc.dart';
 import 'package:search_city/model/weather/location.dart';
+import 'package:search_city/model/weather/weather.dart';
 import 'package:search_city/widget/weather/search.dart';
 
-class Weather extends StatefulWidget {
-  Weather({Key key}) : super(key: key);
+class WeatherDetail extends StatefulWidget {
+  WeatherDetail({Key key}) : super(key: key);
 
   @override
-  _WeatherState createState() => _WeatherState();
+  _WeatherDetailState createState() => _WeatherDetailState();
 }
 
-class _WeatherState extends State<Weather> {
+class _WeatherDetailState extends State<WeatherDetail> {
   WeatherBloc weatherBloc;
+  CityBloc cityBloc;
+  PageController pageController = PageController();
+
+  void addPagerListener() {
+    cityBloc.citySaved.listen((saved) {
+      if (saved) {
+        pageController.jumpToPage(1);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     weatherBloc = BlocProvider.of<WeatherBloc>(context);
-    weatherBloc.setListener();
+    cityBloc = BlocProvider.of<CityBloc>(context);
+    weatherBloc.getData();
+    addPagerListener();
     return Container(
       padding: EdgeInsets.all(8.0),
       child: PageView(
+        controller: pageController,
         children: <Widget>[
           SearchCity(),
           SizedBox.expand(
-            child: Container(
-              child: Column(
-                children: <Widget>[
-                  StreamBuilder<Location>(
-                      stream: weatherBloc.location,
-                      builder: (context, snapshot) {
-                        final name = snapshot?.data?.city ?? "N/A";
-                        return Text(name);
-                      }),
-                  StreamBuilder<Location>(
-                      stream: weatherBloc.location,
-                      builder: (context, snapshot) {
-                        final region = snapshot?.data?.region ?? "N/A";
-                        return Text(region);
-                      }),
-                  StreamBuilder<int>(
-                      stream: weatherBloc.temperature,
-                      builder: (context, snapshot) {
-                        final temperature = snapshot.data?.toString() ?? "N/A";
-                        return Text(temperature);
-                      }),
-                ],
-              ),
-            ),
+            child: StreamBuilder<Weather>(
+                stream: weatherBloc.weather,
+                builder: (context, snapshot) {
+                  final location = snapshot?.data?.location;
+                  final currentObservation = snapshot?.data?.currentObservation;
+                  return Container(
+                    child: Column(
+                      children: <Widget>[
+                        Text(location.city ?? "N/A"),
+                        Text(location.region ?? "N/A"),
+                        Text(currentObservation.condition.temperature
+                                .toString() ??
+                            "N/A"),
+                      ],
+                    ),
+                  );
+                }),
           ),
         ],
       ),

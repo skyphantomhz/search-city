@@ -30,6 +30,7 @@ dependencies:
   oauth1: 1.0.4
   crypto: 2.1.3
   font_awesome_flutter: ^8.5.0
+  shared_preferences: 0.5.4+8
 
 dev_dependencies:
   flutter_test:

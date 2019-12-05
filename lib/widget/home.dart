@@ -24,7 +24,6 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     system = BlocProvider.of<SystemBloc>(context);
     weatherBloc = BlocProvider.of<WeatherBloc>(context);
-    weatherBloc.setListener();
     final colors = Theme.of(context).brightness == Brightness.light
         ? lightTheme
         : darkTheme;
@@ -35,7 +34,7 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Row(
             children: <Widget>[
               Flexible(
-                child: Weather(),
+                child: WeatherDetail(),
                 flex: 1,
               ),
               Flexible(

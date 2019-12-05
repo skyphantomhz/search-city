@@ -5,6 +5,7 @@ import 'package:search_city/bloc/base_bloc.dart';
 import 'package:search_city/model/city.dart';
 import 'package:search_city/service/city_service.dart';
 import 'package:search_city/service/weather_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CityBloc extends BaseBloc {
   final service = GetIt.I<CityService>();
@@ -12,6 +13,8 @@ class CityBloc extends BaseBloc {
 
   PublishSubject<String> _keyWord = PublishSubject<String>();
   PublishSubject<List<City>> _cities = PublishSubject<List<City>>();
+  PublishSubject<bool> _citySaved = PublishSubject<bool>();
+  Observable<bool> get citySaved => _citySaved.stream;
   Observable<List<City>> get cities => _cities.stream;
 
   void addListener() {
@@ -23,7 +26,6 @@ class CityBloc extends BaseBloc {
   void _searchCity(String keyWord) async {
     final data = await service.searchCity(keyWord);
     _cities.sink.add(data);
-    final res = await weatherService.fetchWeather(1252376);
   }
 
   void setKeyWord(String keyWord) {
@@ -42,5 +44,11 @@ class CityBloc extends BaseBloc {
   @override
   Stream mapEventToState(event) {
     return null;
+  }
+
+  void saveLocationId(int woeid) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt("woeid", woeid);
+    _citySaved.sink.add(true);
   }
 }
