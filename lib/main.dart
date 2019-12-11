@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:search_city/bloc/city_bloc.dart';
+import 'package:search_city/bloc/navigator_bloc.dart';
 import 'package:search_city/bloc/system_bloc.dart';
 import 'package:search_city/bloc/weather_bloc.dart';
 import 'package:search_city/util/locator.dart';
@@ -11,12 +12,23 @@ void main() {
   setupLocator();
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
-  runApp(
-    BlocProvider<SystemBloc>(
-      create: (_context) => SystemBloc(),
-      child: MyApp(),
-    ),
-  );
+  runApp(MultiBlocProvider(
+    providers: [
+      BlocProvider<SystemBloc>(
+        create: (_context) => SystemBloc(),
+      ),
+      BlocProvider<NavigatorBloc>(
+        create: (_context) => NavigatorBloc(),
+      ),
+      BlocProvider<CityBloc>(
+        create: (_context) => CityBloc(),
+      ),
+      BlocProvider<WeatherBloc>(
+        create: (_context) => WeatherBloc(),
+      ),
+    ],
+    child: MyApp(),
+  ));
 }
 
 class MyApp extends StatefulWidget {
@@ -48,17 +60,7 @@ class _MyAppState extends State<MyApp> {
             brightness: _brightness,
             primarySwatch: Colors.blue,
           ),
-          home: MultiBlocProvider(
-            providers: [
-              BlocProvider<CityBloc>(
-                create: (_context) => CityBloc(),
-              ),
-              BlocProvider<WeatherBloc>(
-                create: (_context) => WeatherBloc(),
-              ),
-            ],
-            child: MyHomePage(title: 'Search city'),
-          ),
+          home: MyHomePage(title: 'Search city'),
         );
       },
     );

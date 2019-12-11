@@ -10,4 +10,8 @@ class NavigatorBloc extends BaseBloc {
   void dispose() {
     _homeController.close();
   }
+
+  void setHomeState(int state) {
+    _homeController.sink.add(state);
+  }
 }

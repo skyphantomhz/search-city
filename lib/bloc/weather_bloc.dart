@@ -15,6 +15,7 @@ class WeatherBloc extends BaseBloc {
   Observable<int> temperature;
 
   void fetchWeather(int woeid) async {
+    if(woeid == null) return;
     final data = await weatherService.fetchWeather(woeid);
     _weather.sink.add(data);
   }
@@ -25,8 +26,10 @@ class WeatherBloc extends BaseBloc {
   }
 
   void getData() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final woeid = prefs.getInt("woeid");
-    fetchWeather(woeid);
+    print("getData");
+    // final SharedPreferences prefs = await SharedPreferences.getInstance();
+    // final woeid = prefs.getInt("woeid");
+    // print("woeid $woeid");
+    // fetchWeather(woeid);
   }
 }

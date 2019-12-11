@@ -13,8 +13,8 @@ class CityBloc extends BaseBloc {
 
   PublishSubject<String> _keyWord = PublishSubject<String>();
   PublishSubject<List<City>> _cities = PublishSubject<List<City>>();
-  PublishSubject<bool> _citySaved = PublishSubject<bool>();
-  Observable<bool> get citySaved => _citySaved.stream;
+  PublishSubject<int> _woeidSaved = PublishSubject<int>();
+  Observable<int> get woeidSaved => _woeidSaved.stream;
   Observable<List<City>> get cities => _cities.stream;
 
   void addListener() {
@@ -49,6 +49,12 @@ class CityBloc extends BaseBloc {
   void saveLocationId(int woeid) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setInt("woeid", woeid);
-    _citySaved.sink.add(true);
+    _woeidSaved.sink.add(woeid);
+  }
+
+  Future<int> getWoeid() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final woeid = prefs.getInt("woeid");
+    return woeid;
   }
 }
