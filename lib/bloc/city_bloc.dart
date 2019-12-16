@@ -49,7 +49,7 @@ class CityBloc extends BaseBloc {
   void saveLocationId(int woeid) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setInt("woeid", woeid);
-    _woeidSaved.sink.add(woeid);
+    // _woeidSaved.sink.add(woeid);
   }
 
   Future<int> getWoeid() async {

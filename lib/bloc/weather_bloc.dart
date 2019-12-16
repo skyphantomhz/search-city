@@ -4,7 +4,6 @@ import 'package:search_city/bloc/base_bloc.dart';
 import 'package:search_city/model/weather/location.dart';
 import 'package:search_city/model/weather/weather.dart';
 import 'package:search_city/service/weather_service.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class WeatherBloc extends BaseBloc {
   final weatherService = GetIt.I<WeatherService>();
@@ -23,13 +22,5 @@ class WeatherBloc extends BaseBloc {
   @override
   void dispose() {
     _weather.close();
-  }
-
-  void getData() async {
-    print("getData");
-    // final SharedPreferences prefs = await SharedPreferences.getInstance();
-    // final woeid = prefs.getInt("woeid");
-    // print("woeid $woeid");
-    // fetchWeather(woeid);
   }
 }

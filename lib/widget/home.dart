@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:search_city/bloc/navigator_bloc.dart';
+import 'package:search_city/bloc/city_bloc.dart';
 import 'package:search_city/bloc/system_bloc.dart';
+import 'package:search_city/bloc/weather_bloc.dart';
 import 'package:search_city/util/color.dart';
 import 'package:search_city/util/color.dart' as res;
+import 'package:search_city/widget/header_clock.dart';
 import 'package:search_city/widget/weather/search.dart';
-import 'package:search_city/widget/weather/weather.dart';
+import 'package:toast/toast.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
@@ -20,12 +23,17 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   SystemBloc system;
   NavigatorBloc navigatorBloc;
+  CityBloc cityBloc;
+  WeatherBloc weatherBloc;
 
   @override
   Widget build(BuildContext context) {
     system = BlocProvider.of<SystemBloc>(context);
     navigatorBloc = BlocProvider.of<NavigatorBloc>(context);
+    cityBloc = BlocProvider.of<CityBloc>(context);
+    weatherBloc = BlocProvider.of<WeatherBloc>(context);
     setListener();
+    initialData();
     final colors = Theme.of(context).brightness == Brightness.light
         ? lightTheme
         : darkTheme;
@@ -33,36 +41,30 @@ class _MyHomePageState extends State<MyHomePage> {
       body: SafeArea(
         child: Container(
           decoration: BoxDecoration(color: colors[res.Element.background]),
-          child: Row(
+          child: Stack(
             children: <Widget>[
-              Flexible(
-                child: WeatherDetail(),
-                flex: 1,
+              Column(
+                children: <Widget>[
+                  HeaderClock()
+                ],
               ),
-              Flexible(
-                child: Stack(
-                  children: [
-                    Align(
-                      alignment: Alignment(1, -1),
-                      child: Container(
-                        margin: EdgeInsets.all(8.0),
-                        child: IconButton(
-                          icon: Icon(
-                            FontAwesomeIcons.lightbulb,
-                            color: colors[res.Element.item],
-                          ),
-                          onPressed: () {
-                            system.updateTheme(
-                                Theme.of(context).brightness == Brightness.light
-                                    ? Brightness.dark
-                                    : Brightness.light);
-                          },
-                        ),
-                      ),
+              Align(
+                alignment: Alignment(1, -1),
+                child: Container(
+                  margin: EdgeInsets.all(8.0),
+                  child: IconButton(
+                    icon: Icon(
+                      FontAwesomeIcons.lightbulb,
+                      color: colors[res.Element.item],
                     ),
-                  ],
+                    onPressed: () {
+                      system.updateTheme(
+                          Theme.of(context).brightness == Brightness.light
+                              ? Brightness.dark
+                              : Brightness.light);
+                    },
+                  ),
                 ),
-                flex: 1,
               ),
             ],
           ),
@@ -71,14 +73,41 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void setListener() {
-    navigatorBloc.homeStatus.listen((state) {
-      if (state == 1) {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) => SearchCity(),
-        );
+  void setListener(){
+    navigatorBloc.homeStatus.listen((status){
+      if(!mounted) return;
+      switch (status) {
+        case 1:
+          searchCity();
+          break;
+        default:
       }
     });
   }
+
+
+  void initialData() async {
+    var woeid = await cityBloc.getWoeid();
+    if(mounted){
+      if(woeid == null || woeid == 0){
+        Toast.show("Woei is null", context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM);
+        searchCity();
+      }else{
+        Toast.show("Woei is $woeid", context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM);
+        weatherBloc.fetchWeather(woeid);
+      }
+    }
+  }
+
+  void searchCity() async {
+    final result = await showDialog(
+          context: context,
+          builder: (BuildContext context) => SearchCity(),
+        );
+        if(result == 'ok'){
+          setState(() {});
+        }
+  }
 }
+
+

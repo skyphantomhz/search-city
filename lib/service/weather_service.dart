@@ -28,6 +28,7 @@ class WeatherService {
     // Make sure value is encoded
     parameters.add("woeid=" + woeid.toString());
     parameters.add("format=json");
+    parameters.add("u=c");
     parameters.sort();
 
     StringBuffer parametersList = new StringBuffer();
@@ -67,7 +68,7 @@ class WeatherService {
     header["Content-Type"] = "application/json";
     header["Authorization"] = authorizationLine;
 
-    final query = "?woeid=$woeid&format=json";
+    final query = "?woeid=$woeid&format=json&u=c";
     final response = await client.get(baseUrl + query, headers: header);
     if (response.statusCode == 200) {
       var json = _decoder.convert(response.body);
